@@ -7,6 +7,7 @@ from app.models import Provider, ServiceRequest, User, Message, ContactInquiry
 from app.main.forms import RequestForm, LoginForm, ProviderForm, ContactForm
 from app.main import bp
 from app.email import send_contact_inquiry_email
+from app.sms import notify_admin_new_request, notify_customer_status_update
 
 @bp.route("/")
 def index():
@@ -89,6 +90,7 @@ def request_service():
         )
         db.session.add(service_request)
         db.session.commit()
+        notify_admin_new_request(service_request)
         flash("Your service request has been submitted successfully!", "success")
         return redirect(url_for('main.request_service'))
     
@@ -143,6 +145,7 @@ def update_request_status(id):
     if status in ['Pending', 'In Progress', 'Completed', 'Cancelled']:
         req.status = status
         db.session.commit()
+        notify_customer_status_update(req)
         flash(f'Request #{id} status updated to {status}', 'success')
     return redirect(url_for('main.admin_requests'))
 
