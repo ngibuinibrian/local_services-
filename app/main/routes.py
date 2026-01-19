@@ -6,6 +6,7 @@ from app import db, limiter, socketio
 from app.models import Provider, ServiceRequest, User, Message, ContactInquiry
 from app.main.forms import RequestForm, LoginForm, ProviderForm, ContactForm
 from app.main import bp
+from app.email import send_contact_inquiry_email
 
 @bp.route("/")
 def index():
@@ -27,6 +28,7 @@ def contact():
         )
         db.session.add(inquiry)
         db.session.commit()
+        send_contact_inquiry_email(inquiry)
         flash('Thank you! Your message has been sent successfully.', 'success')
         return redirect(url_for('main.contact'))
     return render_template('contact.html', form=form)

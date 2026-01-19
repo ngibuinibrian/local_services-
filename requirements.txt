@@ -11,3 +11,4 @@ flask-socketio
 flask-limiter
 eventlet
 psycopg2-binary
+flask-mail

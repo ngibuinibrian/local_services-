@@ -1,0 +1,13 @@
+Dear Admin,
+
+You have received a new contact inquiry from the Local Services Platform.
+
+Name: {{ inquiry.name }}
+Email: {{ inquiry.email }}
+Timestamp: {{ inquiry.timestamp }}
+
+Message:
+{{ inquiry.message }}
+
+---
+Local Services Automated System
