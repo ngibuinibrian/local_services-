@@ -14,12 +14,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Expose port
-EXPOSE 5000
+# Expose port (Koyeb uses 8080 by default, but we'll use $PORT)
+EXPOSE 8080
 
-# Set environment variables
-ENV FLASK_APP=run.py
-ENV PYTHONUNBUFFERED=1
-
-# Start command
-CMD ["gunicorn", "--worker-class", "eventlet", "-w", "1", "--bind", "0.0.0.0:5000", "run:app"]
+# Start command using shell form to expand $PORT
+CMD gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:${PORT:-8080} run:app

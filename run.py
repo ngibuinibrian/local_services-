@@ -26,9 +26,10 @@ def seed_data():
         db.session.commit()
         print("Default admin user created: admin/password")
 
+# Ensure database is initialized in production/Docker
+with app.app_context():
+    db.create_all()
+    seed_data()
 
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-        seed_data()
     socketio.run(app, debug=True)
