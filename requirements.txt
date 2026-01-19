@@ -13,3 +13,4 @@ eventlet
 psycopg2-binary
 flask-mail
 africastalking
+twilio
