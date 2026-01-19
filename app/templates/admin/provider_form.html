@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Admin{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-7">
+        <div class="glass-card p-5 animate-fade-in">
+            <div class="d-flex align-items-center mb-4">
+                <a href="{{ url_for('main.admin_providers') }}" class="btn btn-sm btn-outline-primary me-3">← Back</a>
+                <h2 class="m-0 fw-bold">{{ title }}</h2>
+            </div>
+
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-600">Provider Name</label>
+                        {{ form.name(class="form-control glass-control") }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-600">Service Type</label>
+                        {{ form.service(class="form-control glass-control", placeholder="e.g., Plumber") }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-600">Location (Neighborhood)</label>
+                        {{ form.location(class="form-control glass-control") }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-600">Phone Number</label>
+                        {{ form.phone(class="form-control glass-control") }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-600">Description</label>
+                        {{ form.description(class="form-control glass-control", rows=3) }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-600">Latitude</label>
+                        {{ form.latitude(class="form-control glass-control", placeholder="-1.286389") }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-600">Longitude</label>
+                        {{ form.longitude(class="form-control glass-control", placeholder="36.817223") }}
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check form-switch p-3 glass-card border-opacity-10">
+                            {{ form.verified(class="form-check-input ms-0 me-2") }}
+                            <label class="form-check-label fw-600">Verified Provider</label>
+                        </div>
+                    </div>
+                    <div class="col-12 mt-4 pt-2">
+                        {{ form.submit(class="btn btn-primary btn-lg w-100 shadow-sm") }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .glass-control {
+        background: rgba(0, 0, 0, 0.02);
+        border: 1px solid var(--glass-border);
+        color: var(--text-main);
+    }
+
+    .glass-control:focus {
+        background: white;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.1);
+    }
+</style>
+{% endblock %}

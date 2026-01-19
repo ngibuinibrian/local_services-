@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Service Providers - Local Services{% endblock %}
+
+{% block content %}
+<h1 class="mb-4 animate-fade-in">Service Providers</h1>
+
+<div id="map" class="animate-fade-in shadow-lg"></div>
+
+<form action="/providers" method="get" class="mb-4 animate-fade-in">
+    <div class="row g-3 align-items-end glass-card p-3">
+        <div class="col-md-4">
+            <label for="serviceSelect" class="form-label">Service</label>
+            <select name="service" id="serviceSelect" class="form-select">
+                <option value="">All Services</option>
+                {% for service in services %}
+                <option value="{{ service }}" {% if request.args.get('service')==service %}selected{% endif %}>{{
+                    service }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="locationSelect" class="form-label">Location</label>
+            <select name="location" id="locationSelect" class="form-select">
+                <option value="">All Locations</option>
+                {% for location in locations %}
+                <option value="{{ location }}" {% if request.args.get('location')==location %}selected{% endif %}>{{
+                    location }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Filter</button>
+        </div>
+        <div class="col-md-2">
+            <button type="button" id="getLocationBtn" class="btn btn-outline-primary w-100">Nearby</button>
+        </div>
+    </div>
+</form>
+
+<div class="row animate-fade-in" style="animation-delay: 0.2s">
+    {% if providers %}
+    {% for provider in providers %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <a href="{{ url_for('main.provider_detail', id=provider.id) }}" class="text-decoration-none">
+            <div class="card h-100 glass-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0 text-main">{{ provider.name }}</h5>
+                        {% if provider.distance %}
+                        <span class="provider-distance">{{ "%.1f"|format(provider.distance) }} km</span>
+                        {% endif %}
+                    </div>
+                    <div class="badge bg-primary bg-opacity-10 text-primary mb-3">{{ provider.service }}</div>
+                    <p class="card-text text-muted small">{{ provider.description|truncate(80) }}</p>
+                </div>
+                <div class="card-footer bg-transparent border-top-0 pt-0">
+                    <small class="text-muted"><i class="bi bi-geo-alt"></i> {{ provider.location }}</small>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-info glass-card">
+            No providers found for the selected criteria.
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Mapbox Access Token - User should replace this with their own free tier token
+        mapboxgl.accessToken = 'pk.eyJ1IjoiZGV2YWRtaW4iLCJhIjoiY2xwYTh2cmNwMDJqZDJqcGZ6NndnYm55cyJ9.P8m9f9UvGvGvGvGvGvGvGv';
+
+        const providers = [
+            {% for provider in providers %}
+            {
+            name: {{ provider.name | tojson }},
+        service: {{ provider.service | tojson }},
+        lat: {{ provider.latitude if provider.latitude is not none else 'null' }},
+        lon: {{ provider.longitude if provider.longitude is not none else 'null' }},
+        url: {{ url_for('main.provider_detail', id = provider.id) | tojson }}
+            },
+        {% endfor %}
+        ];
+
+    // Define Embu County Bounding Box
+    const embuBounds = [
+        [37.0, -0.9], // Southwest coordinates (approximate)
+        [38.0, -0.2]  // Northeast coordinates (approximate)
+    ];
+
+    // Initialize Mapbox
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/light-v11',
+        center: [37.4513, -0.5312], // Default to Embu, Kenya
+        zoom: 11,
+        maxBounds: embuBounds // Restrict map panning
+    });
+
+    const bounds = new mapboxgl.LngLatBounds();
+    let hasMarkers = false;
+
+    providers.forEach(p => {
+        if (p.lat && p.lon) {
+            hasMarkers = true;
+            const marker = new mapboxgl.Marker({ color: '#6366f1' })
+                .setLngLat([p.lon, p.lat])
+                .setPopup(new mapboxgl.Popup({ offset: 25 })
+                    .setHTML(`<strong>${p.name}</strong><br>${p.service}<br><a href="${p.url}" class="btn btn-sm btn-primary mt-2">View Profile</a>`))
+                .addTo(map);
+
+            bounds.extend([p.lon, p.lat]);
+        }
+    });
+
+    if (hasMarkers) {
+        map.fitBounds(bounds, { padding: 50 });
+    }
+
+    // Handle proximity search if lat/lon in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const userLat = parseFloat(urlParams.get('lat'));
+    const userLon = parseFloat(urlParams.get('lon'));
+
+    if (!isNaN(userLat) && !isNaN(userLon)) {
+        new mapboxgl.Marker({ color: '#ef4444' }) // Red marker for user location
+            .setLngLat([userLon, userLat])
+            .setPopup(new mapboxgl.Popup().setHTML('<strong>Your Location</strong>'))
+            .addTo(map);
+
+        map.flyTo({
+            center: [userLon, userLat],
+            zoom: 13,
+            essential: true
+        });
+    }
+    });
+</script>
+{% endblock %}
+
+{% endblock %}

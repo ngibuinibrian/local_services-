@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Local Services - Find Trusted Providers{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="px-4 py-5 my-5 text-center animate-fade-in">
+    <h1 class="hero-title fw-bold mb-4 text-gradient">
+        Find trusted local service providers in minutes
+    </h1>
+    <div class="col-lg-7 mx-auto">
+        <p class="lead mb-5 text-muted" style="font-size: 1.5rem;">Electricians, fiber technicians, fundis, and repair
+            experts near you.</p>
+        <div class="d-grid gap-3 d-sm-flex justify-content-sm-center mb-5">
+            <a href="/providers" class="btn btn-primary btn-lg px-5 shadow">Find a Service</a>
+            <a href="/requests" class="btn btn-outline-primary btn-lg px-5">Request a Service</a>
+        </div>
+        <p class="text-muted small op-75">
+            Used by local residents to find verified service providers
+        </p>
+    </div>
+</div>
+
+<!-- How it Works Section -->
+<div class="container px-4 py-5" id="how-it-works">
+    <h2 class="pb-3 border-bottom border-secondary border-opacity-25 text-center mb-5 animate-fade-in">How it works</h2>
+    <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+        <div class="col animate-fade-in" style="animation-delay: 0.1s">
+            <div class="glass-card p-4 h-100 text-center">
+                <div class="h1 mb-3 text-primary">01</div>
+                <h3 class="h4 fw-bold">Choose a service</h3>
+                <p class="text-muted">Select from a wide range of local experts ready to help.</p>
+            </div>
+        </div>
+        <div class="col animate-fade-in" style="animation-delay: 0.2s">
+            <div class="glass-card p-4 h-100 text-center">
+                <div class="h1 mb-3 text-primary">02</div>
+                <h3 class="h4 fw-bold">Filter by location</h3>
+                <p class="text-muted">Find providers in your specific neighborhood or area.</p>
+            </div>
+        </div>
+        <div class="col animate-fade-in" style="animation-delay: 0.3s">
+            <div class="glass-card p-4 h-100 text-center">
+                <div class="h1 mb-3 text-primary">03</div>
+                <h3 class="h4 fw-bold">Contact directly</h3>
+                <p class="text-muted">Get in touch with the provider to get the job done.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Services Preview Section -->
+<div class="container px-4 py-5" id="services">
+    <h2 class="pb-3 border-bottom border-secondary border-opacity-25 text-center mb-5 animate-fade-in">Popular Services
+    </h2>
+    <div class="row g-4 py-5 row-cols-1 row-cols-md-2 row-cols-lg-3 justify-content-center">
+        {% if services %}
+        {% for name in services %}
+        <div class="col animate-fade-in" style="animation-delay: {{ loop.index * 0.1 }}s">
+            <a href="{{ url_for('main.get_providers', service=name) }}" class="text-decoration-none">
+                <div class="glass-card p-4 text-center h-100">
+                    <h5 class="card-title text-main mb-0">{{ name }}</h5>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="col-12 text-center text-muted">
+            <p>New services coming soon!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

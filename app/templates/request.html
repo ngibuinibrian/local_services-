@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Request Service - Local Services{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center animate-fade-in">
+    <div class="col-md-6">
+        <div class="glass-card shadow-lg overflow-hidden">
+            <div class="p-4 border-bottom border-secondary border-opacity-25 bg-primary bg-opacity-10">
+                <h2 class="h4 mb-0 fw-bold">Request a Service</h2>
+            </div>
+            <div class="p-4">
+                <form method="POST" action="{{ url_for('main.request_service') }}">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.full_name.label(class="form-label text-muted small fw-bold text-uppercase") }}
+                        {{ form.full_name(class="form-control glass-control", placeholder="Your full name") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.service_needed.label(class="form-label text-muted small fw-bold text-uppercase") }}
+                        {{ form.service_needed(class="form-select glass-control") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.location.label(class="form-label text-muted small fw-bold text-uppercase") }}
+                        {{ form.location(class="form-control glass-control", placeholder="Your location") }}
+                    </div>
+                    <div class="mb-4">
+                        {{ form.phone_number.label(class="form-label text-muted small fw-bold text-uppercase") }}
+                        {{ form.phone_number(class="form-control glass-control", placeholder="Your phone number") }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-2">Submit Request</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .glass-control {
+        background: rgba(0, 0, 0, 0.02);
+        border: 1px solid var(--glass-border);
+        color: var(--text-main);
+    }
+
+    .glass-control:focus {
+        background: white;
+        border-color: var(--primary-color);
+        color: var(--text-main);
+        box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.1);
+    }
+
+    .glass-control::placeholder {
+        color: var(--text-muted);
+    }
+
+    .glass-control option {
+        background: white;
+        color: var(--text-main);
+    }
+</style>
+{% endblock %}

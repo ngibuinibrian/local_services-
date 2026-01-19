@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Local Services{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Admin Dashboard</h1>
+<table class="table glass-table mb-0">
+    <thead>
+        <tr>
+            <th class="text-muted">ID</th>
+            <th class="text-muted">Customer</th>
+            <th class="text-muted">Service</th>
+            <th class="text-muted">Neighborhood</th>
+            <th class="text-muted">Phone</th>
+            <th class="text-muted">Status</th>
+            <th class="text-muted">Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for request in requests %}
+        <tr>
+            <td class="fw-bold">#{{ request.id }}</td>
+            <td>{{ request.full_name }}</td>
+            <td>{{ request.service_needed }}</td>
+            <td>{{ request.location }}</td>
+            <td>{{ request.phone }}</td>
+            <td>
+                <div class="d-flex align-items-center">
+                    <form action="{{ url_for('main.update_request_status', id=request.id) }}" method="POST"
+                        class="d-flex align-items-center me-2">
+                        <select name="status" class="form-select form-select-sm glass-control me-2"
+                            onchange="this.form.submit()" style="width: auto;">
+                            <option value="Pending" {% if request.status=='Pending' %}selected{% endif %}>Pending
+                            </option>
+                            <option value="In Progress" {% if request.status=='In Progress' %}selected{% endif %}>In
+                                Progress</option>
+                            <option value="Completed" {% if request.status=='Completed' %}selected{% endif %}>Completed
+                            </option>
+                            <option value="Cancelled" {% if request.status=='Cancelled' %}selected{% endif %}>Cancelled
+                            </option>
+                        </select>
+                    </form>
+                    <a href="{{ url_for('main.chat', request_id=request.id) }}"
+                        class="btn btn-sm btn-outline-primary fw-bold">
+                        💬 Chat
+                    </a>
+                </div>
+            </td>
+            <td class="text-muted small">{{ request.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

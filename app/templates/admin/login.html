@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login - Local Services{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-5">
+        <div class="glass-card p-5 animate-fade-in">
+            <h2 class="text-center mb-4 fw-bold">Admin Sign In</h2>
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    <label class="form-label fw-600">Username</label>
+                    {{ form.username(class="form-control glass-control", placeholder="Enter your username") }}
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-600">Password</label>
+                    {{ form.password(class="form-control glass-control", placeholder="Enter your password") }}
+                </div>
+                <div class="mb-4 form-check">
+                    {{ form.remember_me(class="form-check-input") }}
+                    <label class="form-check-label text-muted">Remember Me</label>
+                </div>
+                <div class="d-grid">
+                    {{ form.submit(class="btn btn-primary btn-lg shadow-sm") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .glass-control {
+        background: rgba(0, 0, 0, 0.02);
+        border: 1px solid var(--glass-border);
+        color: var(--text-main);
+    }
+
+    .glass-control:focus {
+        background: white;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.1);
+    }
+</style>
+{% endblock %}

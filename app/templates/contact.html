@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - Local Services{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-8">
+        <div class="glass-card p-5 animate-fade-in">
+            <h1 class="fw-bold mb-4 text-center">Get in Touch</h1>
+            <p class="text-center text-muted mb-5">Have questions or feedback? We'd love to hear from you.</p>
+
+            <div class="row g-5">
+                <div class="col-md-5 border-end border-opacity-10">
+                    <h3 class="h5 fw-bold mb-4">Contact Information</h3>
+                    <div class="mb-4">
+                        <div class="text-primary small fw-bold text-uppercase mb-1">Email</div>
+                        <div class="text-main">ngibuini58@gmail.com</div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="text-primary small fw-bold text-uppercase mb-1">Phone</div>
+                        <div class="text-main">+254 707919370</div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="text-primary small fw-bold text-uppercase mb-1">Location</div>
+                        <div class="text-main">Embu, Kenya</div>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <h3 class="h5 fw-bold mb-4">Send a Message</h3>
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.name.label(class="form-label small fw-bold text-muted") }}
+                            {{ form.name(class="form-control glass-control", placeholder="Your Name") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label small fw-bold text-muted") }}
+                            {{ form.email(class="form-control glass-control", placeholder="your@email.com") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.message.label(class="form-label small fw-bold text-muted") }}
+                            {{ form.message(class="form-control glass-control", rows="3", placeholder="How can we
+                            help?") }}
+                        </div>
+                        {{ form.submit(class="btn btn-primary w-100 mt-4 py-2") }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .glass-control {
+        background: rgba(0, 0, 0, 0.02);
+        border: 1px solid var(--glass-border);
+        color: var(--text-main);
+    }
+
+    .glass-control:focus {
+        background: white;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.1);
+    }
+</style>
+{% endblock %}

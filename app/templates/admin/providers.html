@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Providers - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-5 animate-fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold m-0">Manage Providers</h2>
+        <a href="{{ url_for('main.add_provider') }}" class="btn btn-primary d-flex align-items-center">
+            <span class="me-2">+</span> Add New Provider
+        </a>
+    </div>
+
+    <div class="glass-card p-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table glass-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="text-muted">Name</th>
+                        <th class="text-muted">Service</th>
+                        <th class="text-muted">Location</th>
+                        <th class="text-muted">Status</th>
+                        <th class="text-muted text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for provider in providers %}
+                    <tr>
+                        <td class="fw-bold">{{ provider.name }}</td>
+                        <td>{{ provider.service }}</td>
+                        <td>{{ provider.location }}</td>
+                        <td>
+                            {% if provider.verified %}
+                            <span
+                                class="badge bg-success-subtle text-success border border-success-subtle">Verified</span>
+                            {% else %}
+                            <span
+                                class="badge bg-warning-subtle text-warning border border-warning-subtle">Unverified</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group">
+                                <a href="{{ url_for('main.edit_provider', id=provider.id) }}"
+                                    class="btn btn-sm btn-outline-primary">Edit</a>
+                                <form action="{{ url_for('main.delete_provider', id=provider.id) }}" method="POST"
+                                    class="d-inline" onsubmit="return confirm('Delete this provider?')">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger ms-1">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

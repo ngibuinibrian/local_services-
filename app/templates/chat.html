@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Chat - Request #{{ request.id }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-md-8">
+        <div class="glass-card shadow-lg p-0 overflow-hidden d-flex flex-column" style="height: 600px;">
+            <!-- Chat Header -->
+            <div
+                class="p-4 border-bottom border-opacity-10 bg-primary bg-opacity-10 d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="h5 fw-bold mb-1">Chat - Request #{{ request.id }}</h2>
+                    <p class="small text-muted mb-0">Topic: {{ request.service_needed }}</p>
+                </div>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3">{{ request.status
+                    }}</span>
+            </div>
+
+            <!-- Chat Messages Area -->
+            <div id="chat-messages" class="flex-grow-1 p-4 overflow-auto bg-light bg-opacity-25"
+                style="background-image: radial-gradient(var(--glass-border) 1px, transparent 0); background-size: 20px 20px;">
+                {% for msg in messages %}
+                <div
+                    class="d-flex mb-3 {% if (is_admin and msg.sender == 'admin') or (not is_admin and msg.sender == 'customer') %}justify-content-end{% endif %}">
+                    <div class="chat-bubble p-3 shadow-sm {% if (is_admin and msg.sender == 'admin') or (not is_admin and msg.sender == 'customer') %}bg-primary text-white rounded-start-lg{% else %}bg-white text-main rounded-end-lg{% endif %}"
+                        style="max-width: 75%; border-radius: 15px;">
+                        <div class="small fw-bold mb-1">{% if msg.sender == 'admin' %}Admin{% else %}Customer{% endif %}
+                        </div>
+                        <div>{{ msg.content }}</div>
+                        <div class="text-end small opacity-75 mt-1" style="font-size: 0.7rem;">{{
+                            msg.timestamp.strftime('%H:%M') }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Chat Input -->
+            <div class="p-4 border-top border-opacity-10 bg-white">
+                <form id="chat-form" class="d-flex gap-2">
+                    <input type="text" id="message-input" class="form-control glass-control py-2 shadow-none"
+                        placeholder="Type your message..." autocomplete="off">
+                    <button type="submit" class="btn btn-primary px-4 shadow-sm">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket_io/4.0.1/socket.io.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('Chat initialized');
+        const socket = io();
+        const requestId = {{ request.id | tojson
+    }};
+    const isAdmin = {{ is_admin | tojson }};
+
+    const messagesDiv = document.getElementById('chat-messages');
+    const chatForm = document.getElementById('chat-form');
+    const messageInput = document.getElementById('message-input');
+
+    // Join room
+    socket.on('connect', () => {
+        console.log('Connected to server');
+        socket.emit('join', { request_id: requestId });
+    });
+
+    // Scroll to bottom
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    // Form submission
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const content = messageInput.value.trim();
+        if (content) {
+            console.log('Sending message:', content);
+            socket.emit('message', { request_id: requestId, content: content });
+            messageInput.value = '';
+        }
+    });
+
+    // Receiving messages
+    socket.on('new_message', (data) => {
+        console.log('Received message:', data);
+        const isSelf = (isAdmin && data.sender === 'admin') || (!isAdmin && data.sender === 'customer');
+
+        const msgHtml = `
+                <div class="d-flex mb-3 ${isSelf ? 'justify-content-end' : ''}">
+                    <div class="chat-bubble p-3 shadow-sm ${isSelf ? 'bg-primary text-white' : 'bg-white text-main'}" style="max-width: 75%; border-radius: 15px;">
+                        <div class="small fw-bold mb-1">${data.sender === 'admin' ? 'Admin' : 'Customer'}</div>
+                        <div>${data.content}</div>
+                        <div class="text-end small opacity-75 mt-1" style="font-size: 0.7rem;">${data.timestamp}</div>
+                    </div>
+                </div>
+            `;
+        messagesDiv.innerHTML += msgHtml;
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Disconnected from server');
+    });
+
+    socket.on('connect_error', (error) => {
+        console.error('Connection error:', error);
+    });
+    });
+</script>
+
+<style>
+    .glass-control {
+        background: rgba(0, 0, 0, 0.02);
+        border: 1px solid var(--glass-border);
+    }
+
+    #chat-messages::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #chat-messages::-webkit-scrollbar-thumb {
+        background: var(--glass-border);
+        border-radius: 10px;
+    }
+</style>
+{% endblock %}
